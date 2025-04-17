@@ -10,6 +10,11 @@ class User extends BaseController
 {
     public function index()
     {
+
+        if (!session()->get('logged_in')) {
+            return redirect()->to('/login');
+        }
+
         $model = new UserModel();
         $search = $this->request->getGet('search');
 
@@ -54,6 +59,7 @@ class User extends BaseController
 
 
     public function editPage($id) {
+        // Ada tambahan function
         $model = new UserModel();
 
         $user = $model->find($id);
@@ -66,6 +72,7 @@ class User extends BaseController
     }
 
     public function edit($id) {
+        // Hari kamis
         helper(['form', 'url']);
 
         $validation = \Config\Services::validation();
@@ -97,13 +104,14 @@ class User extends BaseController
 
     public function detail($id) {
         $model = new UserModel();
+
         $user = $model->find($id);
-        
-        if (!$user) {
+        if(!$user) {
             return redirect()->to('/user');
         }
 
         $data['user'] = $user;
+
         return view('detail_user', $data);
     }
 
@@ -117,5 +125,11 @@ class User extends BaseController
 
         $model->delete($id);
         return redirect()->to('/user');
+    }
+
+    public function logoutLogic() {
+        $session = session();
+        $session->destroy();
+        return redirect()->to('/login');
     }
 }
